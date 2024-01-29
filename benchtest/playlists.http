@@ -1,0 +1,33 @@
+@url = http://localhost:8080
+@id = 1
+
+###
+GET {{url}}/ping
+
+###
+GET {{url}}/v1/playlists
+
+###
+GET {{url}}/v1/playlists/{{id}}
+
+###
+POST {{url}}/v1/playlists
+Content-Type: application/json
+
+{
+  "name": "test-playlist",
+  "owner_id": 1
+}
+
+###
+PUT {{url}}/v1/playlists/{{id}}
+Content-Type: application/json
+
+{
+  "title": "test-title1",
+  "isrc": "test-isrc2",
+  "artist_id": 1
+}
+
+###
+DELETE  {{url}}/v1/playlists/{{id}}

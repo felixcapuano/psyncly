@@ -40,10 +40,15 @@ class ReadPlaylist(WritePlaylist):
     owner: ReadUser
 
 
+class WritePlaylistTrackRelation(BaseModel):
+    playlist_id: int
+    track_id: int
+
+
+class ReadPlaylistTrackRelation(WritePlaylistTrackRelation):
+    id: int
+
+
 class Operation(BaseModel):
-    operation: Literal["add", "remove"]
+    type: Literal["add", "remove"]
     resource_id: int
-
-
-class BulkOperation(BaseModel):
-    operations: list[Operation]
