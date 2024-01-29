@@ -1,5 +1,6 @@
-from pydantic import BaseModel
 from typing import Literal
+
+from pydantic import BaseModel
 
 
 class WriteUser(BaseModel):
@@ -27,22 +28,11 @@ class ReadTrack(WriteTrack):
     id: int
 
 
-class WritePlaylist(BaseModel):
-    name: str
-    owner_id: int
+class WritePlaylistTrackRelation(BaseModel):
+    track: ReadTrack
 
     class Config:
         from_attributes = True
-
-
-class ReadPlaylist(WritePlaylist):
-    id: int
-    owner: ReadUser
-
-
-class WritePlaylistTrackRelation(BaseModel):
-    playlist_id: int
-    track_id: int
 
 
 class ReadPlaylistTrackRelation(WritePlaylistTrackRelation):
@@ -52,3 +42,15 @@ class ReadPlaylistTrackRelation(WritePlaylistTrackRelation):
 class Operation(BaseModel):
     type: Literal["add", "remove"]
     resource_id: int
+
+
+class WritePlaylist(BaseModel):
+    name: str
+
+    class Config:
+        from_attributes = True
+
+
+class ReadPlaylist(WritePlaylist):
+    id: int
+    owner: ReadUser

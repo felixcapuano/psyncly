@@ -2,7 +2,6 @@ from typing import Any
 
 from sqlalchemy.orm import Session
 
-from psyncly import models, schemas
 from psyncly.crud.base_crud import BaseCrud, crudmethod
 from psyncly.database import Base
 
@@ -24,12 +23,14 @@ class GenericCrud(BaseCrud):
         skip: int = 0,
         limit: int = 100,
     ):
-        select = self.db.query(self.ModelClass).offset(skip).limit(limit)
+        select = self.db.query(self.ModelClass)
 
         if filters:
             select = select.filter_by(**filters)
 
-        return select.all()
+        data = select.offset(skip).limit(limit).all()
+
+        return data
 
     @crudmethod
     def get_by_id(self, id: int):

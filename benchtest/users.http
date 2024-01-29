@@ -16,8 +16,8 @@ POST {{url}}/v1/users
 Content-Type: application/json
 
 {
-  "username": "test-title",
-  "email": "test-isrc"
+  "username": "test",
+  "email": "test email"
 }
 
 ###

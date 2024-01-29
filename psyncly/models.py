@@ -49,7 +49,7 @@ class PlaylistTrackRelation(Base):
     id = Column(Integer, primary_key=True)
 
     track_id = Column(Integer, ForeignKey("tracks.id"))
-    track = relationship("Track", back_populates="")
+    track = relationship("Track", back_populates="playlists")
 
     playlist_id = Column(Integer, ForeignKey("playlists.id"))
     playlist = relationship("Playlist", back_populates="tracks")

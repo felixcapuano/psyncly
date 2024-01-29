@@ -1,0 +1,18 @@
+@url = http://localhost:8080
+
+###
+GET {{url}}/v1/playlists/1/tracks
+
+###
+PATCH  {{url}}/v1/playlists/1/tracks
+Content-Type: application/json
+
+[
+  {
+    "type": "add",
+    "resource_id": 3
+  }
+]
+
+###
+GET {{url}}/v1/playlists/1
