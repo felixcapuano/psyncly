@@ -1,14 +1,14 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
-from psyncly import schemas
-from psyncly.crud.resources_crud import PlaylistCrud, PlaylistTrackRelationCrud
+from psyncly import schemas, models
+from psyncly.crud.resources_crud import PlaylistCrud, TrackCrud
 from psyncly.dependencies import get_db
 
 router = APIRouter(tags=["Playlists"], prefix="/playlists")
 
 
-@router.get("", response_model=list[schemas.ReadPlaylist])
+@router.get("", response_model=list[schemas.Playlist])
 async def list_playlists(
     skip: int = 0,
     limit: int = 100,
@@ -17,7 +17,7 @@ async def list_playlists(
     return PlaylistCrud(db).get(None, skip, limit)
 
 
-@router.get("/{playlist_id}", response_model=schemas.ReadPlaylist)
+@router.get("/{playlist_id}", response_model=schemas.Playlist)
 async def get_playlist(playlist_id: int, db: Session = Depends(get_db)):
     playlist = PlaylistCrud(db).get_by_id(id=playlist_id)
     if not playlist:
@@ -26,52 +26,46 @@ async def get_playlist(playlist_id: int, db: Session = Depends(get_db)):
     return playlist
 
 
-@router.post("", status_code=201, response_model=schemas.ReadPlaylist)
+@router.post("", status_code=201, response_model=schemas.Playlist)
 async def create_playlist(
-    playlist: schemas.WritePlaylist, db: Session = Depends(get_db)
+    playlist: schemas.CreatePlaylist, db: Session = Depends(get_db)
 ):
     return PlaylistCrud(db).create(obj=playlist)
 
 
-@router.put("/{playlist_id}", response_model=schemas.ReadPlaylist)
+@router.put("/{playlist_id}", response_model=schemas.Playlist)
 async def modify_playlist(
-    playlist_id: int, playlist: schemas.WritePlaylist, db: Session = Depends(get_db)
+    playlist_id: int, playlist: schemas.ModifyPlaylist, db: Session = Depends(get_db)
 ):
     return PlaylistCrud(db).modify(id=playlist_id, obj=playlist)
 
 
 @router.delete("/{playlist_id}", status_code=204)
 async def delete_playlist(playlist_id: int, db: Session = Depends(get_db)):
-    PlaylistCrud(db).delete(id=playlist_id)
+    PlaylistCrud(db).delete_by_id(id=playlist_id)
 
 
 @router.get(
     "/{playlist_id}/tracks",
-    response_model=list[schemas.ReadPlaylistTrackRelation],
+    # response_model=list[schemas.Track],
 )
 async def list_playlist(
-    playlist_id: int,
-    skip: int = 0,
-    limit: int = 100,
-    db: Session = Depends(get_db),
+    playlist_id: int, skip: int = 0, limit: int = 100, db: Session = Depends(get_db)
 ):
-    return PlaylistTrackRelationCrud(db).get({"playlist_id": playlist_id}, skip, limit)
+    return PlaylistCrud(db).get_by_id(id=playlist_id).tracks
 
 
 @router.patch("/{playlist_id}/tracks", status_code=204)
 async def update_playlist(
     playlist_id: int, operations: list[schemas.Operation], db: Session = Depends(get_db)
 ):
-    crud = PlaylistTrackRelationCrud(db)
-
     for op in operations:
+        playlist = PlaylistCrud(db).get_by_id(id=playlist_id)
+        track = TrackCrud(db).get_by_id(id=op.resource_id)
+
         if op.type == "add":
-            new_relation = schemas.WritePlaylistTrackRelation(
-                playlist_id=playlist_id,
-                track_id=op.resource_id,
-            )
-            crud.create(new_relation)
+            playlist.tracks.append(track)
         elif op.type == "remove":
-            crud.delete({"playlist_id": playlist_id, "track_id": op.resource_id})
-        else:
-            raise HTTPException(status_code=400, detail="Unkown operation")
+            playlist.tracks.remove(track)
+
+    db.commit()

@@ -10,9 +10,21 @@ Content-Type: application/json
 [
   {
     "type": "add",
-    "resource_id": 3
+    "resource_id": 1
   }
 ]
 
 ###
-GET {{url}}/v1/playlists/1
+GET  {{url}}/v1/playlists
+
+###
+DELETE  {{url}}/v1/playlists/2
+
+###
+POST {{url}}/v1/playlists
+Content-Type: application/json
+
+{
+  "name": "myplaylist",
+  "owner_id": 2
+}

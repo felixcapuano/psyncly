@@ -8,12 +8,12 @@ from psyncly.dependencies import get_db
 router = APIRouter(tags=["Users"], prefix="/users")
 
 
-@router.get("", response_model=list[schemas.ReadUser])
-async def list_user(db: Session = Depends(get_db), skip: int = 0, limit: int = 100):
+@router.get("", response_model=list[schemas.User])
+async def list_user(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     return UserCrud(db).get(None, skip, limit)
 
 
-@router.get("/{user_id}", response_model=schemas.ReadUser)
+@router.get("/{user_id}", response_model=schemas.User)
 async def get_user(user_id: int, db: Session = Depends(get_db)):
     user = UserCrud(db).get_by_id(id=user_id)
     if not user:
@@ -22,14 +22,14 @@ async def get_user(user_id: int, db: Session = Depends(get_db)):
     return user
 
 
-@router.post("", status_code=201, response_model=schemas.ReadUser)
-async def create_user(user: schemas.WriteUser, db: Session = Depends(get_db)):
+@router.post("", status_code=201, response_model=schemas.User)
+async def create_user(user: schemas.CreateUser, db: Session = Depends(get_db)):
     return UserCrud(db).create(obj=user)
 
 
-@router.put("/{user_id}", response_model=schemas.ReadUser)
+@router.put("/{user_id}", response_model=schemas.User)
 async def modify_user(
-    user_id: int, user: schemas.WriteUser, db: Session = Depends(get_db)
+    user_id: int, user: schemas.ModifyUser, db: Session = Depends(get_db)
 ):
     return UserCrud(db).modify(id=user_id, obj=user)
 

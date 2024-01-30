@@ -28,9 +28,7 @@ class GenericCrud(BaseCrud):
         if filters:
             select = select.filter_by(**filters)
 
-        data = select.offset(skip).limit(limit).all()
-
-        return data
+        return select.offset(skip).limit(limit).all()
 
     @crudmethod
     def get_by_id(self, id: int):

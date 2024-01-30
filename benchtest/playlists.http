@@ -15,7 +15,7 @@ POST {{url}}/v1/playlists
 Content-Type: application/json
 
 {
-  "name": "test-playlist",
+  "name": "playlist1",
   "owner_id": 1
 }
 
