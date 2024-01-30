@@ -1,6 +1,8 @@
 @url = http://localhost:8080
 
 ###
+GET {{url}}/v1/playlists/1
+###
 GET {{url}}/v1/playlists/1/tracks
 
 ###

@@ -49,14 +49,12 @@ async def delete_playlist(playlist_id: int, db: Session = Depends(get_db)):
     "/{playlist_id}/tracks",
     # response_model=list[schemas.Track],
 )
-async def list_playlist(
-    playlist_id: int, skip: int = 0, limit: int = 100, db: Session = Depends(get_db)
-):
+async def list_playlist_tracks(playlist_id: int, db: Session = Depends(get_db)):
     return PlaylistCrud(db).get_by_id(id=playlist_id).tracks
 
 
 @router.patch("/{playlist_id}/tracks", status_code=204)
-async def update_playlist(
+async def update_playlist_tracks(
     playlist_id: int, operations: list[schemas.Operation], db: Session = Depends(get_db)
 ):
     for op in operations:
