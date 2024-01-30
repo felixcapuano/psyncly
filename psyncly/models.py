@@ -76,7 +76,7 @@ class Track(Base):
     )
 
 
-class CronTasks(Base):
+class CronTask(Base):
     __tablename__ = "cron_tasks"
 
     id = Column(Integer, primary_key=True)
