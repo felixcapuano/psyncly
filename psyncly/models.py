@@ -23,8 +23,8 @@ class User(Base):
     id = Column(Integer, primary_key=True)
     email = Column(String, unique=True, nullable=False)
     username = Column(String, index=True)
-    created_on = Column(DateTime(), default=datetime.now, nullable=False)
-    update_on = Column(
+    created_at = Column(DateTime(), default=datetime.now, nullable=False)
+    updated_at = Column(
         DateTime(), default=datetime.now, onupdate=datetime.now, nullable=False
     )
 
@@ -38,8 +38,8 @@ class Playlist(Base):
     name = Column(String, nullable=False)
     owner_id = Column(Integer, ForeignKey("users.id"), nullable=False)
     provider_id = Column(Integer, ForeignKey("services.id"), nullable=False)
-    created_on = Column(DateTime(), default=datetime.now, nullable=False)
-    update_on = Column(
+    created_at = Column(DateTime(), default=datetime.now, nullable=False)
+    updated_at = Column(
         DateTime(), default=datetime.now, onupdate=datetime.now, nullable=False
     )
 
@@ -64,8 +64,8 @@ class Track(Base):
     title = Column(String, nullable=False)
     artist = Column(String, nullable=False)
     isrc = Column(String, unique=True, nullable=False)
-    created_on = Column(DateTime(), default=datetime.now, nullable=False)
-    update_on = Column(
+    created_at = Column(DateTime(), default=datetime.now, nullable=False)
+    updated_at = Column(
         DateTime(), default=datetime.now, onupdate=datetime.now, nullable=False
     )
 
