@@ -1,7 +1,6 @@
 """
 doc: https://docs.sqlalchemy.org/en/20/orm/basic_relationships.html#combining-association-object-with-many-to-many-access-patterns
 """
-from typing import List
 from sqlalchemy import (
     Column,
     ForeignKey,
@@ -46,12 +45,12 @@ class Playlist(Base):
     owner = relationship("User", back_populates="playlists")
     tracks = relationship(
         "Track",
-        secondary="track_playlist_associations",
+        secondary="track_associations",
         back_populates="playlists",
     )
     consumers = relationship(
         "Service",
-        secondary="consumers_associations",
+        secondary="consumer_associations",
         back_populates="playlists_as_consumer",
     )
     provider = relationship("Service", back_populates="playlists_as_provider")
@@ -71,7 +70,7 @@ class Track(Base):
 
     playlists = relationship(
         "Playlist",
-        secondary="track_playlist_associations",
+        secondary="track_associations",
         back_populates="tracks",
         viewonly=True,
     )
@@ -93,21 +92,21 @@ class Sevice(Base):
 
     playlist_as_consumer = relationship(
         "Playlist",
-        secondary="consumers_associations",
+        secondary="consumer_associations",
         back_populates="consumers",
     )
     playlist_as_provider = relationship("Playlist", back_populates="provider")
 
 
 class ConsumersAssociation(Base):
-    __tablename__ = "consumers_associations"
+    __tablename__ = "consumer_associations"
 
     playlist_id = Column(Integer, ForeignKey("playlists.id"), primary_key=True)
     service_id = Column(Integer, ForeignKey("services.id"), primary_key=True)
 
 
 class TrackPlaylistAssociation(Base):
-    __tablename__ = "track_playlist_associations"
+    __tablename__ = "track_associations"
 
     track_id = Column(Integer, ForeignKey("tracks.id"), primary_key=True)
     playlist_id = Column(Integer, ForeignKey("playlists.id"), primary_key=True)
