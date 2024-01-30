@@ -12,6 +12,7 @@ from sqlalchemy import (
 )
 from sqlalchemy.orm import relationship, Mapped
 from datetime import datetime
+from uuid import uuid4
 
 from psyncly.database import Base
 
@@ -36,22 +37,24 @@ class Playlist(Base):
     id = Column(Integer, primary_key=True)
     name = Column(String, nullable=False)
     owner_id = Column(Integer, ForeignKey("users.id"), nullable=False)
+    provider_id = Column(Integer, ForeignKey("services.id"), nullable=False)
     created_on = Column(DateTime(), default=datetime.now, nullable=False)
     update_on = Column(
         DateTime(), default=datetime.now, onupdate=datetime.now, nullable=False
     )
 
     owner = relationship("User", back_populates="playlists")
-
     tracks = relationship(
         "Track",
-        secondary="track_playlist_association",
+        secondary="track_playlist_associations",
         back_populates="playlists",
     )
-    # track_associations = relationship(
-    #     "TrackPlaylistAssociation",
-    #     back_populates="playlist",
-    # )
+    consumers = relationship(
+        "Service",
+        secondary="consumers_associations",
+        back_populates="playlists_as_consumer",
+    )
+    provider = relationship("Service", back_populates="playlists_as_provider")
 
 
 class Track(Base):
@@ -68,38 +71,43 @@ class Track(Base):
 
     playlists = relationship(
         "Playlist",
-        secondary="track_playlist_association",
+        secondary="track_playlist_associations",
         back_populates="tracks",
         viewonly=True,
     )
-    # playlist_associations = relationship(
-    #     "TrackPlaylistAssociation",
-    #     back_populates="track",
-    # )
+
+
+class CronTasks(Base):
+    __tablename__ = "cron_tasks"
+
+    id = Column(Integer, primary_key=True)
+    cron_id = Column(String, default=uuid4)
+    # provider
+    # consumers
+
+
+class Sevice(Base):
+    __tablename__ = "services"
+
+    id = Column(Integer, primary_key=True)
+
+    playlist_as_consumer = relationship(
+        "Playlist",
+        secondary="consumers_associations",
+        back_populates="consumers",
+    )
+    playlist_as_provider = relationship("Playlist", back_populates="provider")
+
+
+class ConsumersAssociation(Base):
+    __tablename__ = "consumers_associations"
+
+    playlist_id = Column(Integer, ForeignKey("playlists.id"), primary_key=True)
+    service_id = Column(Integer, ForeignKey("services.id"), primary_key=True)
 
 
 class TrackPlaylistAssociation(Base):
-    __tablename__ = "track_playlist_association"
+    __tablename__ = "track_playlist_associations"
 
     track_id = Column(Integer, ForeignKey("tracks.id"), primary_key=True)
     playlist_id = Column(Integer, ForeignKey("playlists.id"), primary_key=True)
-
-    # playlist = relationship("Playlist", back_populates="track_associations")
-    # track = relationship("Track", back_populates="playlist_associations")
-
-
-# class PlaylistTrackRelation(Base):
-#     __tablename__ = "playlist_track_relation"
-#     __table_args__ = (
-#         UniqueConstraint(
-#             "track_id", "playlist_id", name="playlist_track_relation_constraint"
-#         ),
-#     )
-
-#     id = Column(Integer, primary_key=True)
-#     track_id = Column(Integer, ForeignKey("tracks.id"), nullable=False)
-#     playlist_id = Column(Integer, ForeignKey("playlists.id"), nullable=False)
-#     created_on = Column(DateTime(), default=datetime.now, nullable=False)
-
-#     track = relationship("Track", back_populates="playlists")
-#     playlist = relationship("Playlist", back_populates="tracks")
