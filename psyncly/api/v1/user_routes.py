@@ -24,7 +24,7 @@ async def get_user(user_id: int, db: Session = Depends(get_db)):
 
 @router.post("", status_code=201, response_model=user_schemas.User)
 async def create_user(user: user_schemas.CreateUser, db: Session = Depends(get_db)):
-    return UserCrud(db).create(obj=user)
+    return UserCrud(db).create(obj=dict(user))
 
 
 # @router.put("/{user_id}", response_model=user_schemas.User)

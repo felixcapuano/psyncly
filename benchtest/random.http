@@ -30,3 +30,14 @@ Content-Type: application/json
   "name": "myplaylist",
   "owner_id": 2
 }
+
+###
+GET {{url}}/v1/users/1/service_accounts
+
+###
+POST {{url}}/v1/users/1/service_accounts
+Content-Type: application/json
+
+{
+  "service_type": "Spotify"
+}

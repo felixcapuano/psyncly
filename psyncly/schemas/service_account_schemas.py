@@ -16,15 +16,14 @@ class ServiceAccount(BaseModel):
 
 class CreateServiceAccount(BaseModel):
     service_type: str
-    owner_id: int
 
     class Config:
         from_attributes = True
 
 
 class ModifyServiceAccount(BaseModel):
-    service_type: str | None
-    owner_id: int | None
+    new_service_type: str | None
+    new_owner_id: int | None
 
     class Config:
         from_attributes = True

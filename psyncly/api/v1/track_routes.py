@@ -24,7 +24,7 @@ async def get_track(track_id: int, db: Session = Depends(get_db)):
 
 @router.post("", status_code=201, response_model=track_schemas.Track)
 async def create_track(track: track_schemas.CreateTrack, db: Session = Depends(get_db)):
-    return TrackCrud(db).create(obj=track)
+    return TrackCrud(db).create(obj=dict(track))
 
 
 # @router.put("/{track_id}", response_model=track_schemas.Track)

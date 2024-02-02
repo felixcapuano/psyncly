@@ -97,6 +97,10 @@ class ServiceAccount(Base):
     id = Column(Integer, primary_key=True)
     service_type = Column(String, nullable=False)
     owner_id = Column(Integer, ForeignKey("users.id"), nullable=False)
+    created_at = Column(DateTime(), default=datetime.now, nullable=False)
+    updated_at = Column(
+        DateTime(), default=datetime.now, onupdate=datetime.now, nullable=False
+    )
 
     service_playlists = relationship(
         "ServicePlaylist", back_populates="service_account"

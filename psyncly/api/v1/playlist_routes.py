@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException, Path
 from sqlalchemy.orm import Session
 
+from psyncly import models
 from psyncly.schemas import playlist_schemas, track_schemas, common_schemas
 from psyncly.crud.resources_crud import PlaylistCrud, TrackCrud
 from psyncly.dependencies import get_db
@@ -15,7 +16,11 @@ async def list_playlists(
     limit: int = 100,
     db: Session = Depends(get_db),
 ):
-    return PlaylistCrud(db).get(skip, limit, filters={"owner_id": user_id})
+    return PlaylistCrud(db).get(
+        skip,
+        limit,
+        filters=(models.Playlist.owner_id == user_id,),
+    )
 
 
 @router.get("/{playlist_id}", response_model=playlist_schemas.Playlist)
@@ -24,7 +29,10 @@ async def get_playlist(
     playlist_id: int,
     db: Session = Depends(get_db),
 ):
-    playlist = PlaylistCrud(db).get_by_id(id=playlist_id, filters={"owner_id": user_id})
+    playlist = PlaylistCrud(db).get_by_id(
+        id=playlist_id,
+        filters=(models.Playlist.owner_id == user_id,),
+    )
     if not playlist:
         raise HTTPException(status_code=404)
 
@@ -69,7 +77,14 @@ async def list_playlist_tracks(
     playlist_id: int,
     db: Session = Depends(get_db),
 ):
-    return PlaylistCrud(db).get_by_id(id=playlist_id).tracks
+    return (
+        PlaylistCrud(db)
+        .get_by_id(
+            id=playlist_id,
+            filters=(models.Playlist.owner_id == user_id,),
+        )
+        .tracks
+    )
 
 
 @router.patch("/{playlist_id}/tracks", status_code=204)

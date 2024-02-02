@@ -36,19 +36,19 @@ class ResourceCrud(BaseCrud):
         self,
         skip: int = 0,
         limit: int = 100,
-        filters: dict | None = None,
+        filters: tuple | None = None,
     ):
         select = self.db.query(self.ModelClass)
         if filters:
-            select = select.filter_by(**filters)
+            select = select.filter(*filters)
 
         return select.offset(skip).limit(limit).all()
 
     @errorhandler
-    def get_by_id(self, id: int, filters: dict | None = None):
+    def get_by_id(self, id: int, filters: tuple | None = None):
         select = self.db.query(self.ModelClass)
         if filters:
-            select = select.filter_by(id=id, **filters)
+            select = select.filter(self.ModelClass.id == id, *filters)
         else:
             select = select.filter_by(id=id)
 
@@ -64,23 +64,25 @@ class ResourceCrud(BaseCrud):
 
     @errorhandler
     def modify(self, id: int, obj: dict):
-        select = self.db.query(self.ModelClass).filter(self.ModelClass.id == id)
+        select = self.db.query(self.ModelClass).filter_by(id=id)
         select.update(obj)
         self.db.commit()
 
-        return select.first()
-
     @errorhandler
-    def delete(self, filters: dict | None = None):
+    def delete(self, filters: tuple | None = None):
         select = self.db.query(self.ModelClass)
         if filters:
-            select = select.filter_by(**filters)
+            select = select.filter(*filters)
         select.delete()
         self.db.commit()
 
     @errorhandler
-    def delete_by_id(self, id: int):
-        select = self.db.query(self.ModelClass).filter(self.ModelClass.id == id)
+    def delete_by_id(self, id: int, filters: dict | None = None):
+        select = self.db.query(self.ModelClass)
+        if filters:
+            select = select.filter_by(self.ModelClass.id == id, *filters)
+        else:
+            select = select.filter_by(id=id)
         select.delete()
         self.db.commit()
 
