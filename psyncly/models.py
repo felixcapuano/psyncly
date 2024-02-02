@@ -28,6 +28,7 @@ class User(Base):
     )
 
     playlists = relationship("Playlist", back_populates="owner")
+    service_accounts = relationship("ServiceAccount", back_populates="owner")
 
 
 class Playlist(Base):
@@ -36,24 +37,19 @@ class Playlist(Base):
     id = Column(Integer, primary_key=True)
     name = Column(String, nullable=False)
     owner_id = Column(Integer, ForeignKey("users.id"), nullable=False)
-    provider_id = Column(Integer, ForeignKey("services.id"), nullable=False)
     created_at = Column(DateTime(), default=datetime.now, nullable=False)
     updated_at = Column(
         DateTime(), default=datetime.now, onupdate=datetime.now, nullable=False
     )
 
     owner = relationship("User", back_populates="playlists")
+    workers = relationship("CronJob", back_populates="playlist")
     tracks = relationship(
         "Track",
         secondary="track_associations",
         back_populates="playlists",
     )
-    consumers = relationship(
-        "Service",
-        secondary="consumer_associations",
-        back_populates="playlists_as_consumer",
-    )
-    provider = relationship("Service", back_populates="playlists_as_provider")
+    service_playlists = relationship("ServicePlaylist", back_populates="playlist")
 
 
 class Track(Base):
@@ -76,33 +72,51 @@ class Track(Base):
     )
 
 
-class CronTask(Base):
-    __tablename__ = "cron_tasks"
+class ServicePlaylist(Base):
+    __tablename__ = "service_playlists"
 
     id = Column(Integer, primary_key=True)
-    cron_id = Column(String, default=uuid4)
-    # provider
-    # consumers
-
-
-class Sevice(Base):
-    __tablename__ = "services"
-
-    id = Column(Integer, primary_key=True)
-
-    playlist_as_consumer = relationship(
-        "Playlist",
-        secondary="consumer_associations",
-        back_populates="consumers",
+    external_id = Column(String, nullable=False)
+    playlist_id = Column(Integer, ForeignKey("playlists.id"), nullable=False)
+    service_account_id = Column(
+        Integer, ForeignKey("service_accounts.id"), nullable=False
     )
-    playlist_as_provider = relationship("Playlist", back_populates="provider")
+    created_at = Column(DateTime(), default=datetime.now, nullable=False)
+    updated_at = Column(
+        DateTime(), default=datetime.now, onupdate=datetime.now, nullable=False
+    )
+
+    service_account = relationship("ServiceAccount", back_populates="service_playlists")
+    playlist = relationship("Playlist", back_populates="service_playlists")
 
 
-class ConsumersAssociation(Base):
-    __tablename__ = "consumer_associations"
+class ServiceAccount(Base):
+    __tablename__ = "service_accounts"
 
-    playlist_id = Column(Integer, ForeignKey("playlists.id"), primary_key=True)
-    service_id = Column(Integer, ForeignKey("services.id"), primary_key=True)
+    id = Column(Integer, primary_key=True)
+    service_type = Column(String, nullable=False)
+    owner_id = Column(Integer, ForeignKey("users.id"), nullable=False)
+
+    service_playlists = relationship(
+        "ServicePlaylist", back_populates="service_account"
+    )
+    owner = relationship("User", back_populates="service_accounts")
+
+
+class Worker(Base):
+    __tablename__ = "workers"
+
+    id = Column(Integer, primary_key=True)
+    worker_id = Column(String, default=uuid4, nullable=False)
+    worker_type = Column(String, nullable=False)
+    status = Column(String, nullable=False)
+    playlist_id = Column(String, ForeignKey("playlists.id"), nullable=False)
+    created_at = Column(DateTime(), default=datetime.now, nullable=False)
+    updated_at = Column(
+        DateTime(), default=datetime.now, onupdate=datetime.now, nullable=False
+    )
+
+    playlist = relationship("Playlist", back_populates="workers")
 
 
 class TrackPlaylistAssociation(Base):
