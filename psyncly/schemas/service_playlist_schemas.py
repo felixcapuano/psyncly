@@ -18,8 +18,8 @@ class ServicePlaylist(BaseModel):
 
 class CreateServicePlaylist(BaseModel):
     external_id: str
-    playlist_id: int
-    service_account_id: int
+    # playlist_id: int
+    # service_account_id: int
 
     class Config:
         from_attributes = True

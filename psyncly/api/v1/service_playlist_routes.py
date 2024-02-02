@@ -4,7 +4,10 @@ from sqlalchemy.orm import Session
 from psyncly import schemas, models
 from psyncly.crud.resources_crud import ServicePlaylistCrud
 from psyncly.dependencies import get_db
-from psyncly.schemas.service_playlist_schemas import ServicePlaylist
+from psyncly.schemas.service_playlist_schemas import (
+    ServicePlaylist,
+    CreateServicePlaylist,
+)
 
 router = APIRouter(
     tags=["Service Playlists"],
@@ -21,7 +24,9 @@ async def list_service_playlists(
     db: Session = Depends(get_db),
 ):
     return ServicePlaylistCrud(db).get(
-        skip, limit, filters={"playlist_id": playlist_id}
+        skip,
+        limit,
+        filters=(models.ServicePlaylist.playlist_id == playlist_id),
     )
 
 
@@ -33,7 +38,8 @@ async def get_service_playlist(
     db: Session = Depends(get_db),
 ):
     service_playlist = ServicePlaylistCrud(db).get_by_id(
-        id=service_playlist_id, filters={"playlist_id": playlist_id}
+        id=service_playlist_id,
+        filters=(models.ServicePlaylist.playlist_id == playlist_id),
     )
     if not service_playlist:
         raise HTTPException(status_code=404)
@@ -45,9 +51,10 @@ async def get_service_playlist(
 async def create_service_playlist(
     user_id: int,
     playlist_id: int,
+    service_playlist: CreateServicePlaylist,
     db: Session = Depends(get_db),
 ):
-    return "TODO"
+    return ServicePlaylistCrud(db).create(obj=dict(service_playlist))
 
 
 # @router.put("/{service_playlist_id}")

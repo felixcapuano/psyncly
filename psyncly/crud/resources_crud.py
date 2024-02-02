@@ -50,7 +50,7 @@ class ResourceCrud(BaseCrud):
         if filters:
             select = select.filter(self.ModelClass.id == id, *filters)
         else:
-            select = select.filter_by(id=id)
+            select = select.filter(self.ModelClass.id == id)
 
         return select.first()
 
@@ -73,6 +73,7 @@ class ResourceCrud(BaseCrud):
         select = self.db.query(self.ModelClass)
         if filters:
             select = select.filter(*filters)
+
         select.delete()
         self.db.commit()
 
@@ -80,9 +81,10 @@ class ResourceCrud(BaseCrud):
     def delete_by_id(self, id: int, filters: dict | None = None):
         select = self.db.query(self.ModelClass)
         if filters:
-            select = select.filter_by(self.ModelClass.id == id, *filters)
+            select = select.filter(self.ModelClass.id == id, *filters)
         else:
-            select = select.filter_by(id=id)
+            select = select.filter(self.ModelClass.id == id)
+
         select.delete()
         self.db.commit()
 

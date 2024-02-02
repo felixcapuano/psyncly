@@ -26,4 +26,13 @@ Content-Type: application/json
 }
 
 ###
-GET {{url}}/v1/users/1/playlists/1
+GET {{url}}/v1/users
+
+###
+GET {{url}}/v1/users/1/service_accounts
+
+###
+GET {{url}}/v1/users/1/playlists
+
+###
+GET {{url}}/v1/users/1/playlists/1/service_playlist
