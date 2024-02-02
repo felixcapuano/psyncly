@@ -15,21 +15,21 @@ async def list_workers(db: Session = Depends(get_db)):
     return "TODO"
 
 
-@router.post("")
-async def create_worker(db: Session = Depends(get_db)):
-    return "TODO"
-
-
 @router.get("/{service_playlist_id}")
 async def get_worker(db: Session = Depends(get_db)):
     return "TODO"
 
 
-@router.delete("/{service_playlist_id}")
-async def delete_worker(db: Session = Depends(get_db)):
+@router.post("")
+async def create_worker(db: Session = Depends(get_db)):
     return "TODO"
 
 
-@router.put("/{service_playlist_id}")
-async def modify_worker(db: Session = Depends(get_db)):
+# @router.put("/{service_playlist_id}")
+# async def modify_worker(db: Session = Depends(get_db)):
+#     return "TODO"
+
+
+@router.delete("/{service_playlist_id}")
+async def delete_worker(db: Session = Depends(get_db)):
     return "TODO"

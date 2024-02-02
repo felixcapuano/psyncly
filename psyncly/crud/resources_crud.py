@@ -34,9 +34,9 @@ class ResourceCrud(BaseCrud):
     @errorhandler
     def get(
         self,
-        filters: dict | None = None,
         skip: int = 0,
         limit: int = 100,
+        filters: dict | None = None,
     ):
         select = self.db.query(self.ModelClass)
         if filters:
@@ -45,23 +45,27 @@ class ResourceCrud(BaseCrud):
         return select.offset(skip).limit(limit).all()
 
     @errorhandler
-    def get_by_id(self, id: int):
-        select = self.db.query(self.ModelClass).filter(self.ModelClass.id == id)
+    def get_by_id(self, id: int, filters: dict | None = None):
+        select = self.db.query(self.ModelClass)
+        if filters:
+            select = select.filter_by(id=id, **filters)
+        else:
+            select = select.filter_by(id=id)
 
         return select.first()
 
     @errorhandler
-    def create(self, obj: Any):
-        new_obj = self.ModelClass(**dict(obj))
+    def create(self, obj: dict):
+        new_obj = self.ModelClass(**obj)
         self.db.add(new_obj)
         self.db.commit()
 
         return new_obj
 
     @errorhandler
-    def modify(self, id: int, obj: Any):
+    def modify(self, id: int, obj: dict):
         select = self.db.query(self.ModelClass).filter(self.ModelClass.id == id)
-        select.update(dict(obj))
+        select.update(obj)
         self.db.commit()
 
         return select.first()
@@ -91,3 +95,15 @@ class UserCrud(ResourceCrud):
 
 class PlaylistCrud(ResourceCrud):
     ModelClass = models.Playlist
+
+
+class ServicePlaylistCrud(ResourceCrud):
+    ModelClass = models.ServicePlaylist
+
+
+class ServiceAccountCrud(ResourceCrud):
+    ModelClass = models.ServiceAccount
+
+
+class WorkerCrud(ResourceCrud):
+    ModelClass = models.Worker

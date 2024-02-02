@@ -1,6 +1,7 @@
 """
 doc: https://docs.sqlalchemy.org/en/20/orm/basic_relationships.html#combining-association-object-with-many-to-many-access-patterns
 """
+
 from sqlalchemy import (
     Column,
     ForeignKey,
@@ -43,7 +44,7 @@ class Playlist(Base):
     )
 
     owner = relationship("User", back_populates="playlists")
-    workers = relationship("CronJob", back_populates="playlist")
+    workers = relationship("Worker", back_populates="playlist")
     tracks = relationship(
         "Track",
         secondary="track_associations",
@@ -110,7 +111,7 @@ class Worker(Base):
     worker_id = Column(String, default=uuid4, nullable=False)
     worker_type = Column(String, nullable=False)
     status = Column(String, nullable=False)
-    playlist_id = Column(String, ForeignKey("playlists.id"), nullable=False)
+    playlist_id = Column(Integer, ForeignKey("playlists.id"), nullable=False)
     created_at = Column(DateTime(), default=datetime.now, nullable=False)
     updated_at = Column(
         DateTime(), default=datetime.now, onupdate=datetime.now, nullable=False
