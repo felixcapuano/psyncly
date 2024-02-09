@@ -17,8 +17,8 @@ class ServicePlaylist(BaseModel):
 
 class CreateServicePlaylist(BaseModel):
     external_id: str
-    # playlist_id: int
-    # account_id: int
+    playlist_id: int
+    account_id: int
 
     model_config = ConfigDict(from_attributes=True)
 

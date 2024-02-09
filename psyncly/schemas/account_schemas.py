@@ -6,7 +6,6 @@ from psyncly.schemas.user_schemas import User
 class Account(BaseModel):
     id: int
     account_type: str
-    owner: User
     created_at: datetime
     updated_at: datetime
 

@@ -30,6 +30,7 @@ class User(Base):
 
     playlists = relationship("Playlist", back_populates="owner")
     accounts = relationship("Account", back_populates="owner")
+    service_playlists = relationship("ServicePlaylist", back_populates="owner")
 
 
 class Playlist(Base):
@@ -45,12 +46,12 @@ class Playlist(Base):
 
     owner = relationship("User", back_populates="playlists")
     workers = relationship("Worker", back_populates="playlist")
+    service_playlists = relationship("ServicePlaylist", back_populates="playlist")
     tracks = relationship(
         "Track",
         secondary="track_associations",
         back_populates="playlists",
     )
-    service_playlists = relationship("ServicePlaylist", back_populates="playlist")
 
 
 class Track(Base):
@@ -78,16 +79,16 @@ class ServicePlaylist(Base):
 
     id = Column(Integer, primary_key=True)
     external_id = Column(String, nullable=False)
+    owner_id = Column(Integer, ForeignKey("users.id"), nullable=False)
+    account_id = Column(Integer, ForeignKey("accounts.id"), nullable=False)
     playlist_id = Column(Integer, ForeignKey("playlists.id"), nullable=False)
-    account_id = Column(
-        Integer, ForeignKey("accounts.id"), nullable=False
-    )
     created_at = Column(DateTime(), default=datetime.now, nullable=False)
     updated_at = Column(
         DateTime(), default=datetime.now, onupdate=datetime.now, nullable=False
     )
 
     account = relationship("Account", back_populates="service_playlists")
+    owner = relationship("User", back_populates="service_playlists")
     playlist = relationship("Playlist", back_populates="service_playlists")
 
 
@@ -102,9 +103,7 @@ class Account(Base):
         DateTime(), default=datetime.now, onupdate=datetime.now, nullable=False
     )
 
-    service_playlists = relationship(
-        "ServicePlaylist", back_populates="account"
-    )
+    service_playlists = relationship("ServicePlaylist", back_populates="account")
     owner = relationship("User", back_populates="accounts")
 
 

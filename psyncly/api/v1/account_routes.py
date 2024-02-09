@@ -59,7 +59,7 @@ async def create_account(
 #     return "TODO"
 
 
-@router.delete("/{account_id}")
+@router.delete("/{account_id}", status_code=204)
 async def delete_account(
     user_id: int,
     account_id: int,
