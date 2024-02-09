@@ -105,8 +105,8 @@ class ServicePlaylistCrud(ResourceCrud):
     ModelClass = models.ServicePlaylist
 
 
-class ServiceAccountCrud(ResourceCrud):
-    ModelClass = models.ServiceAccount
+class AccountCrud(ResourceCrud):
+    ModelClass = models.Account
 
 
 class WorkerCrud(ResourceCrud):

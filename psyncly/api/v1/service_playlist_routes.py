@@ -26,7 +26,10 @@ async def list_service_playlists(
     return ServicePlaylistCrud(db).get(
         skip,
         limit,
-        filters=(models.ServicePlaylist.playlist_id == playlist_id),
+        filters=(
+            models.ServicePlaylist.playlist_id == playlist_id,
+            models.ServicePlaylist.playlist.owner_id == user_id,
+        ),
     )
 
 
@@ -39,7 +42,10 @@ async def get_service_playlist(
 ):
     service_playlist = ServicePlaylistCrud(db).get_by_id(
         id=service_playlist_id,
-        filters=(models.ServicePlaylist.playlist_id == playlist_id),
+        filters=(
+            models.ServicePlaylist.playlist_id == playlist_id,
+            models.ServicePlaylist.playlist.owner_id == user_id,
+        ),
     )
     if not service_playlist:
         raise HTTPException(status_code=404)
@@ -54,7 +60,10 @@ async def create_service_playlist(
     service_playlist: CreateServicePlaylist,
     db: Session = Depends(get_db),
 ):
-    return ServicePlaylistCrud(db).create(obj=dict(service_playlist))
+    service_playlist_dict = dict(service_playlist)
+    service_playlist_dict.update(playlist_id=playlist_id)
+
+    return ServicePlaylistCrud(db).create(obj=service_playlist_dict)
 
 
 # @router.put("/{service_playlist_id}")

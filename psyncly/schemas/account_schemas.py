@@ -3,9 +3,9 @@ from datetime import datetime
 from psyncly.schemas.user_schemas import User
 
 
-class ServiceAccount(BaseModel):
+class Account(BaseModel):
     id: int
-    service_type: str
+    account_type: str
     owner: User
     created_at: datetime
     updated_at: datetime
@@ -13,14 +13,14 @@ class ServiceAccount(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
 
-class CreateServiceAccount(BaseModel):
-    service_type: str
+class CreateAccount(BaseModel):
+    account_type: str
 
     model_config = ConfigDict(from_attributes=True)
 
 
-class ModifyServiceAccount(BaseModel):
-    new_service_type: str | None
+class ModifyAccount(BaseModel):
+    new_account_type: str | None
     new_owner_id: int | None
 
     model_config = ConfigDict(from_attributes=True)
