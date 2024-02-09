@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 from datetime import datetime
 from psyncly.schemas.playlist_schemas import Playlist
 
@@ -12,8 +12,7 @@ class Worker(BaseModel):
     created_at: datetime
     updated_at: datetime
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 class CreateWorker(BaseModel):
@@ -22,8 +21,7 @@ class CreateWorker(BaseModel):
     status: str
     playlist_id: int
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 class ModifyWorker(BaseModel):
@@ -32,5 +30,4 @@ class ModifyWorker(BaseModel):
     status: str | None
     playlist_id: int | None
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)

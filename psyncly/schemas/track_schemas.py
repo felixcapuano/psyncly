@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 from datetime import datetime
 
 
@@ -10,8 +10,7 @@ class Track(BaseModel):
     created_at: datetime
     updated_at: datetime
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 class CreateTrack(BaseModel):
@@ -19,8 +18,7 @@ class CreateTrack(BaseModel):
     artist: str
     isrc: str
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 class ModifyTrack(BaseModel):
@@ -28,5 +26,4 @@ class ModifyTrack(BaseModel):
     artist: str | None
     isrc: str | None
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
